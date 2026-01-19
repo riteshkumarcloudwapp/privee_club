@@ -1,0 +1,17 @@
+// NOTES
+// UTILS - reusable code is in the utils folder like multer etc.
+
+// dotenv - all sensetive data are kept .
+// where we put db config and server related environment variable.
+
+// So insted of writing
+// Import dotenv from .env
+// then config dotenv file
+// we push all the env var into a common env configuration file.
+// then use it .
+
+//DB connection
+//1️⃣ Install required packages
+//2️⃣ .env file (Database config)
+//3️⃣ envconfig.js
+//4️⃣ Create Sequelize instance
