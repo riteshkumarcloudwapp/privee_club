@@ -1,13 +1,14 @@
 import { Sequelize } from "sequelize";
 import dbConfig from "../common/config/db.js";
-// import User from "./User.js";
+
+import User from "./User.js";
 
 const sequelize = new Sequelize(dbConfig.url, {
   ...dbConfig,
 });
 
 const models = {
-  // User: User(sequelize, Sequelize.DataTypes),
+  User,
 };
 
 // Setup associations

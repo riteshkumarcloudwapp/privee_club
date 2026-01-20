@@ -15,3 +15,6 @@
 //2️⃣ .env file (Database config)
 //3️⃣ envconfig.js
 //4️⃣ Create Sequelize instance
+
+// Always use fcm token in user resgister and login. *always add language filed in it.
+// Make single Api through type and value fieds in json.(In postman)(eg. selfie and bestPic)
