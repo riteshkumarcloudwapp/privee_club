@@ -91,3 +91,5 @@ export const updateUserProfile = async (req, res) => {
     });
   }
 };
+
+export const userInfo = async (req, res) => {};
