@@ -2,6 +2,7 @@ import { Sequelize } from "sequelize";
 import dbConfig from "../common/config/db.js";
 
 import User from "./User.js";
+import WhatAreYouLookingFor from "./WhatAreYouLookingFor.js";
 
 const sequelize = new Sequelize(dbConfig.url, {
   ...dbConfig,
@@ -9,6 +10,7 @@ const sequelize = new Sequelize(dbConfig.url, {
 
 const models = {
   User,
+  WhatAreYouLookingFor,
 };
 
 // Setup associations

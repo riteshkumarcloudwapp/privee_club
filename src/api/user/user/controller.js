@@ -1,104 +1,92 @@
 import User from "../../../models/User.js";
+import WhatAreYouLookingFor from "../../../models/WhatAreYouLookingFor.js";
 
-// USER SELFIE
-export const userSelfie = async (req, res) => {
+export const updateUserProfile = async (req, res) => {
   try {
     const { id } = req.user;
+    const { type, value } = req.body;
 
-    // check for file data.
-    if (!req.file) {
-      return res.status(401).json({
+    if (!type) {
+      return res.status(400).json({
         status: false,
-        message: "Selfie image is required!!",
+        message: "Type is required",
       });
     }
-    // get image path
-    const imagePath = req.file.path;
 
-    // find user
-    const user = await findByPk(id);
+    // Find user
+    const user = await User.findByPk(id);
     if (!user) {
-      return res.status(401).json({
+      return res.status(404).json({
         status: false,
-        message: "User not registered!!",
+        message: "User not registered",
       });
     }
 
-    //update Slefie.
-    user.slefie = imagePath;
-    await User.save();
+    switch (type) {
+      case "best_pic":
+        if (!req.file) {
+          return res.status(400).json({
+            status: false,
+            message: "Best pic image is required",
+          });
+        }
+        user.best_pic = req.file.path;
+        await user.save();
+        break;
 
-    // return response
-    return res.status(201).json({
+      case "gender":
+        if (!value) {
+          return res.status(400).json({
+            status: false,
+            message: "Gender is required",
+          });
+        }
+        user.gender = value;
+        await user.save();
+        break;
+
+      case "relationship_goal":
+        if (!value) {
+          return res.status(400).json({
+            status: false,
+            message: "Relationship goal is required",
+          });
+        }
+
+        // find existing relationship goal
+        const existingGoal = await WhatAreYouLookingFor.findOne({
+          where: { user_id: id },
+        });
+
+        if (existingGoal) {
+          // update
+          existingGoal.looking_for = value;
+          await existingGoal.save();
+        } else {
+          // create
+          await WhatAreYouLookingFor.create({
+            user_id: id,
+            looking_for: value,
+          });
+        }
+        break;
+
+      default:
+        return res.status(400).json({
+          status: false,
+          message: "Invalid type",
+        });
+    }
+
+    return res.status(200).json({
       status: true,
-      message: "Users Selfie Uploaded Successfully!!",
+      message: "Profile updated successfully",
     });
   } catch (error) {
-    console.error("User Selfie API Error:", error);
+    console.error("Update User Profile Error:", error);
     return res.status(500).json({
       status: false,
       message: "Internal server error",
-      error: error.message,
-    });
-  }
-};
-
-// USER BEST PIC
-export const userPic = async (req, res) => {
-  try {
-    const { id } = req.user;
-
-    // check for file data.
-    if (!req.file) {
-      return res.status(401).json({
-        status: false,
-        message: "Selfie image is required!!",
-      });
-    }
-    // get image path
-    const imagePath = req.file.path;
-
-    // find user
-    const user = await findByPk(id);
-    if (!user) {
-      return res.status(401).json({
-        status: false,
-        message: "User not registered!!",
-      });
-    }
-
-    //update Slefie.
-    user.best_pic = imagePath;
-    await User.save();
-
-    // return response
-    return res.status(201).json({
-      status: true,
-      message: "Users best pic Uploaded Successfully!!",
-    });
-  } catch (error) {
-    console.error("User Selfie API Error:", error);
-    return res.status(500).json({
-      status: false,
-      message: "Internal server error",
-      error: error.message,
-    });
-  }
-};
-
-// USER GENDER API
-export const userGender = async (req, res) => {
-  try {
-    // get data from client side.
-    const { gender } = req.body;
-    if (!gender) {
-      return res.status(401).json({});
-    }
-  } catch (error) {
-    console.log("UserGender Api error", error);
-    return res.status(500).json({
-      status: false,
-      message: "Internal Server Error",
       error: error.message,
     });
   }
