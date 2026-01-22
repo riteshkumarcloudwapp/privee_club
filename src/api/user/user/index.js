@@ -1,5 +1,5 @@
 import express from "express";
-import { updateUserProfile } from "./controller.js";
+import { updateUserProfile, userInfo } from "./controller.js";
 import authauthenticateToken from "../../../common/middleware/jetToken.middleware.js";
 
 import createMulter from "../../../utils/multer.js";
@@ -13,5 +13,7 @@ router.post(
   upload.single("best_pic"),
   updateUserProfile,
 );
+
+router.post("/user-info", authauthenticateToken, userInfo);
 
 export default router;
