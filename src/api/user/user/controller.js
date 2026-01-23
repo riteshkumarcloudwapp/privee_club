@@ -1,3 +1,4 @@
+import { Messages } from "openai/resources/chat/completions.js";
 import User from "../../../models/User.js";
 import WhatAreYouLookingFor from "../../../models/WhatAreYouLookingFor.js";
 import Joi from "joi";
@@ -234,3 +235,65 @@ export const userInfo = async (req, res) => {
 
 //..........USER PROFILE DETAILS...............................
 
+//get user profile details
+export const getUserProfile = async (req, res) => {
+  try {
+    // get id
+    const { id } = req.user;
+
+    //fetch user
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(401).json({
+        status: false,
+        message: "user not found!!",
+      });
+    }
+
+    // response
+    return res.status(201).json({
+      status: true,
+      data: user,
+      Messages: "User details fetched successfull!!",
+    });
+  } catch (error) {
+    console.log("userProfile error", error);
+    return res.status(501).json({
+      status: false,
+      message: "Internal server error!!",
+      error: error.message,
+    });
+  }
+};
+
+// update user details (single api)
+export const updateUser = async (req, res) => {
+  try {
+    // get data from client
+    const { id } = req.user;
+    const { type, value } = req.body;
+
+    // fetch user
+    const user = await User.findByPk(id);
+    if (!user) {
+      res.status(401).json({
+        status: false,
+        message: "user not found!!",
+      });
+    }
+
+    // update
+    switch (type) {
+      // update name
+      case name:
+        break;
+    }
+  } catch (error) {
+    console.log("updateUser error", error);
+    return res.status(500).json({
+      status: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
