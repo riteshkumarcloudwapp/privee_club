@@ -18,3 +18,4 @@
 
 // Always use fcm token in user resgister and login. *always add language filed in it.
 // Make single Api through type and value fieds in json.(In postman)(eg. selfie and bestPic)
+// use type and value method.

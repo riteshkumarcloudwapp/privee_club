@@ -28,6 +28,7 @@ export const updateUserProfile = async (req, res) => {
     }
 
     switch (type) {
+      /* ================= INTERESTED IN ================= */
       case "intrested_in":
         // validate(joi)
         const validation = Joi.object({
@@ -43,15 +44,16 @@ export const updateUserProfile = async (req, res) => {
 
         // update
         await user.update({
-          favorite_music,
-          favorite_tv_show,
-          favorite_movie,
-          favorite_book,
-          favorite_sport,
-          other,
+          favorite_music: value.favorite_music,
+          favorite_tv_show: value.favorite_tv_show,
+          favorite_movie: value.favorite_movie,
+          favorite_book: value.favorite_book,
+          favorite_sport: value.favorite_sport,
+          other: value.other,
         });
         break;
 
+      /* ================= SOURCE ================= */
       case "where did you hear about privee club":
         if (!value) {
           return res.status(400).json({
@@ -63,6 +65,7 @@ export const updateUserProfile = async (req, res) => {
         await user.save();
         break;
 
+      /* ================= IMAGE ================= */
       case "best_pic":
         if (!req.file) {
           return res.status(400).json({
@@ -74,6 +77,7 @@ export const updateUserProfile = async (req, res) => {
         await user.save();
         break;
 
+      /* ================= GENDER ================= */
       case "gender":
         if (!value) {
           return res.status(400).json({
@@ -85,6 +89,7 @@ export const updateUserProfile = async (req, res) => {
         await user.save();
         break;
 
+      /* ================= RELATIONSHIP GOAL ================= */
       case "relationship_goal":
         if (!value) {
           return res.status(400).json({
@@ -250,6 +255,9 @@ export const getUserProfile = async (req, res) => {
       });
     }
 
+    const userData = user.toJSON();
+    userData.age = calculateAge(userData.dob);
+
     // response
     return res.status(201).json({
       status: true,
@@ -282,11 +290,140 @@ export const updateUser = async (req, res) => {
       });
     }
 
-    // update
+    //...........update...........
     switch (type) {
-      // update name
-      case name:
+      //.....Image...........
+      case "best_pic":
+        if (!req.file) {
+          return res.status(401).json({
+            status: false,
+            message: "Best Pic is required!!",
+          });
+        }
+
+        //update the image
+        user.best_pic = req.file.path;
+        await user.save();
         break;
+
+      //....profile_name.........
+      case "profile_name":
+        if (!value) {
+          return res.status(401).json({
+            status: false,
+            message: "Profile_name is required!!",
+          });
+        }
+        user.profile_name = value;
+        await user.save();
+        break;
+
+      //.....city......
+      case "city":
+        if (!value) {
+          return res.status(400).json({
+            status: false,
+            message: "City is required",
+          });
+        }
+        user.city = value.trim();
+        await user.save();
+        break;
+
+      /* ================= RELATIONSHIP GOAL ================= */
+      case "relationship_goal":
+        if (!value) {
+          return res.status(400).json({
+            status: false,
+            message: "Relationship goal is required",
+          });
+        }
+
+        // find existing relationship goal
+        const existingGoal = await WhatAreYouLookingFor.findOne({
+          where: { user_id: id },
+        });
+
+        existingGoal.looking_for = value;
+        await existingGoal.save();
+        break;
+
+      //..........About..........
+      case "about": {
+        const validation = Joi.object({
+          about_me: Joi.string().trim().required(),
+          my_perfect_match: Joi.string().trim().required(),
+        });
+        const { error } = validation.validate(value);
+        if (error) return res.json({ status: false, message: error.message });
+
+        user.update({
+          about: value.about_me,
+          about_perfect_match: value.my_perfect_match,
+        });
+        break;
+      }
+
+      //.......info..........
+      case "info": {
+        const validation = Joi.object({
+          age: Joi.number().integer().min(18).max(100).required(),
+          height: Joi.number().positive().required(), // cm
+          weight: Joi.number().positive().required(), // kg
+          hair_color: Joi.string().trim().required(),
+          eye_color: Joi.string().trim().required(),
+          body_type: Joi.string().trim().required(),
+          nationality: Joi.string().trim().required(),
+          city: Joi.string().trim().required(),
+          sexual_orientation: Joi.string().trim().required(),
+          education: Joi.string().trim().required(),
+          field_of_work: Joi.string().trim().required(),
+          relationship_status: Joi.string().trim().required(),
+          zodiac_sign: Joi.string().trim().required(),
+          smoking: Joi.string().valid("no", "occasionally", "yes").required(),
+          drinking: Joi.string().valid("no", "occasionally", "yes").required(),
+          tattoos: Joi.string().valid("no", "yes").required(),
+          piercings: Joi.string().valid("no", "yes").required(),
+          favorite_music: Joi.string().max(255).allow(null, ""),
+          favorite_tv_show: Joi.string().max(255).allow(null, ""),
+          favorite_movie: Joi.string().max(255).allow(null, ""),
+          favorite_book: Joi.string().max(255).allow(null, ""),
+          favorite_sport: Joi.string().max(255).allow(null, ""),
+        });
+
+        const { error } = validation.validate({ value });
+        if (error) return res.json({ status: false, message: error.message });
+
+        user.create({
+          age: value.age,
+          height: value.height,
+          weight: value.weight,
+          hair_color: value.hair_color,
+          eye_color: value.eye_color,
+          body_type: value.body_type,
+          nationality: value.nationality,
+          city: value.city,
+          sexual_orientation: value.sexual_orientation,
+          education: value.education,
+          field_of_work: value.field_of_work,
+          relationship_status: value.relationship_status,
+          zodiac_sign: value.zodiac_sign,
+          smoking: value.smoking,
+          drinking: value.drinking,
+          tattoos: value.tattoos,
+          piercings: value.piercings,
+          favorite_music: value.favorite_music,
+          favorite_tv_show: value.favorite_tv_show,
+          favorite_movie: value.favorite_movie,
+          favorite_book: value.favorite_book,
+          favorite_sport: value.favorite_sport,
+        });
+        user.save();
+        break;
+      }
+
+      //........gallery..........
+      case "gallery":
     }
   } catch (error) {
     console.log("updateUser error", error);
