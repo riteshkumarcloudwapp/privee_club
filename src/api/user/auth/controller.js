@@ -2,7 +2,7 @@ import joi from "joi";
 import User from "../../../models/User.js";
 import bcrypt from "bcrypt";
 import { Op } from "sequelize";
-import { generateToken } from "../../../common/middleware/jetToken.middleware.js";
+import generateToken from "./service.js";
 
 // USER SIGN-UP
 export const userSignUp = async (req, res) => {
@@ -70,12 +70,9 @@ export const userSignUp = async (req, res) => {
       });
     }
 
-    // remove sensetive data from user object ie.
-    const { password: _, ...newUser } = user.toJSON();
-
     return res.status(201).json({
       status: true,
-      data: newUser,
+      data: user,
       message: "User created Successfully!!",
     });
   } catch (error) {
@@ -103,12 +100,12 @@ export const userSignIn = async (req, res) => {
     if (error) return res.json({ status: false, message: error.message });
 
     // check if user exist or not.
-    const existUser = User.findOne({
+    const existUser = await User.findOne({
       where: { email },
     });
     if (!existUser) {
       return res.status(401).json({
-        status: true,
+        status: false,
         message: "User not registered!!",
       });
     }
@@ -129,14 +126,14 @@ export const userSignIn = async (req, res) => {
     const token = generateToken(existUser);
 
     // return response
-    return res.status(201).json({
+    return res.status(200).json({
       status: true,
       token,
       message: "User login successfully!!",
     });
   } catch (error) {
     console.log("User Sign-In error", error);
-    return re.status(501).json({
+    return res.status(500).json({
       status: false,
       message: "Something went wrong!!",
     });
@@ -144,3 +141,47 @@ export const userSignIn = async (req, res) => {
 };
 
 // EMAIL VERIFICATION CODE AFTER REGISTRATION
+
+//CHANGE PASSWORD
+export const changePassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const { id } = req.user;
+
+    // check for user existance
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(401).json({
+        status: false,
+        message: "User not found!!",
+      });
+    }
+    // check if password is correct or not.
+    const checkPassword = bcrypt.compare(oldPassword, user.password);
+    if (!checkPassword) {
+      return res.status(401).json({
+        status: false,
+        message: "Enter correct password!!",
+      });
+    }
+
+    //update password
+    user.password = newPassword;
+    await user.save();
+
+    return res.status(201).json({
+      status: true,
+      message: "Password changed successfully!!",
+    });
+  } catch (error) {
+    console.log("chnagePassword error", error);
+    return res.status(401).json({
+      status: false,
+      message: "Something went wrong!!",
+    });
+  }
+};
+
+// PASSWORD RESET CODE FORGOT PASSWORD
+
+// SOCIAL AUTHENTICATION (GOOGLE , FACEBOOK , APPLE)

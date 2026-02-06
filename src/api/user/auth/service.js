@@ -7,4 +7,4 @@ export const generateToken = (user) => {
   });
 };
 
-export { generateToken };
+export default generateToken;

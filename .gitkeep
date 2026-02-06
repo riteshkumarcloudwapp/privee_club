@@ -19,3 +19,6 @@
 // Always use fcm token in user resgister and login. *always add language filed in it.
 // Make single Api through type and value fieds in json.(In postman)(eg. selfie and bestPic)
 // use type and value method.
+
+//always use joi module for validation of request body and query params. *always add language filed in it.
+// and also pagination whenever you get data and make a list of data.

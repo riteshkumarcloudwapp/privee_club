@@ -10,6 +10,7 @@ const User = sequelize.define(
       primaryKey: true,
     },
 
+    // REQUIRED (SIGNUP)
     first_name: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -31,11 +32,6 @@ const User = sequelize.define(
       unique: true,
     },
 
-    best_pic: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-
     mobile_number: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -46,27 +42,36 @@ const User = sequelize.define(
       allowNull: false,
     },
 
-    gender: {
-      type: DataTypes.ENUM("male", "female", "other"),
-      allowNull: false,
-    },
-
     language: {
       type: DataTypes.STRING,
+      allowNull: false,
       defaultValue: "en",
+    },
+
+    // OPTIONAL PROFILE FIELDS
+    best_pic: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+
+    gender: {
+      type: DataTypes.ENUM("male", "female", "other"),
+      allowNull: true,
     },
 
     dob: {
       type: DataTypes.DATEONLY,
-      allowNull: false,
+      allowNull: true,
     },
 
     height: {
       type: DataTypes.INTEGER,
+      allowNull: true,
     },
 
     weight: {
       type: DataTypes.INTEGER,
+      allowNull: true,
     },
 
     body_type: {
@@ -76,40 +81,42 @@ const User = sequelize.define(
 
     hair_color: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
 
     eye_color: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
 
     nationality: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
 
     region: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
 
     city: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
 
     sexual_orientation: {
       type: DataTypes.ENUM("straight", "gay", "lesbian", "bisexual", "other"),
-      allowNull: false,
+      allowNull: true,
     },
 
     education: {
       type: DataTypes.STRING,
+      allowNull: true,
     },
 
     field_of_work: {
       type: DataTypes.STRING,
+      allowNull: true,
     },
 
     relationship_status: {
@@ -143,30 +150,32 @@ const User = sequelize.define(
 
     smoking: {
       type: DataTypes.ENUM("no", "occasionally", "yes"),
-      defaultValue: "no",
+      allowNull: true,
     },
 
     drinking: {
       type: DataTypes.ENUM("no", "occasionally", "yes"),
-      defaultValue: "no",
+      allowNull: true,
     },
 
     tattoos: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
+      type: DataTypes.ENUM("yes", "no"),
+      allowNull: true,
     },
 
     piercings: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
+      type: DataTypes.ENUM("yes", "no"),
+      allowNull: true,
     },
 
     about_me: {
       type: DataTypes.TEXT,
+      allowNull: true,
     },
 
     about_perfect_match: {
       type: DataTypes.TEXT,
+      allowNull: true,
     },
 
     interested_in: {
@@ -178,30 +187,37 @@ const User = sequelize.define(
         "favorite_sport",
         "other",
       ),
+      allowNull: true,
     },
 
     favorite_music: {
       type: DataTypes.STRING(255),
+      allowNull: true,
     },
 
     favorite_tv_show: {
       type: DataTypes.STRING(255),
+      allowNull: true,
     },
 
     favorite_movie: {
       type: DataTypes.STRING(255),
+      allowNull: true,
     },
 
     favorite_book: {
       type: DataTypes.STRING(255),
+      allowNull: true,
     },
 
     favorite_sport: {
       type: DataTypes.STRING(255),
+      allowNull: true,
     },
 
     other: {
       type: DataTypes.STRING(255),
+      allowNull: true,
     },
 
     source: {
@@ -216,12 +232,12 @@ const User = sequelize.define(
         "event",
         "other",
       ),
-      allowNull: false,
+      allowNull: true,
     },
 
     is_active: {
       type: DataTypes.BOOLEAN,
-      defaultValue: true,
+      defaultValue: false,
     },
   },
   {
