@@ -76,10 +76,11 @@ export const userSignUp = async (req, res) => {
       message: "User created Successfully!!",
     });
   } catch (error) {
-    console.log("sign-up erorr", error);
+    console.log("sign-up Error:", error);
     return res.status(501).json({
       status: false,
-      message: "Something went wrong!!",
+      message: "Internal server error!!",
+      error: error.message,
     });
   }
 };
@@ -132,10 +133,11 @@ export const userSignIn = async (req, res) => {
       message: "User login successfully!!",
     });
   } catch (error) {
-    console.log("User Sign-In error", error);
+    console.log("User Sign-In Error:", error);
     return res.status(500).json({
       status: false,
-      message: "Something went wrong!!",
+      message: "Internal server error!",
+      error: error.message,
     });
   }
 };
@@ -148,6 +150,12 @@ export const changePassword = async (req, res) => {
     const { oldPassword, newPassword } = req.body;
     const { id } = req.user;
 
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({
+        status: false,
+        message: "Old password and new password are required",
+      });
+    }
     // check for user existance
     const user = await User.findByPk(id);
     if (!user) {
@@ -157,16 +165,17 @@ export const changePassword = async (req, res) => {
       });
     }
     // check if password is correct or not.
-    const checkPassword = bcrypt.compare(oldPassword, user.password);
-    if (!checkPassword) {
+    const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isPasswordMatch) {
       return res.status(401).json({
         status: false,
         message: "Enter correct password!!",
       });
     }
 
-    //update password
-    user.password = newPassword;
+    // hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 8);
+    user.password = hashedPassword;
     await user.save();
 
     return res.status(201).json({
@@ -174,10 +183,11 @@ export const changePassword = async (req, res) => {
       message: "Password changed successfully!!",
     });
   } catch (error) {
-    console.log("chnagePassword error", error);
-    return res.status(401).json({
+    console.log("chnagePassword Error:", error);
+    return res.status(500).json({
       status: false,
-      message: "Something went wrong!!",
+      message: "Internal server error!!",
+      error: error.message,
     });
   }
 };
