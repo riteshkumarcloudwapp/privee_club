@@ -20,5 +20,12 @@
 // Make single Api through type and value fieds in json.(In postman)(eg. selfie and bestPic)
 // use type and value method.
 
-//always use joi module for validation of request body and query params. *always add language filed in it.
+//always use joi module for validation of request body and query params. 
 // and also pagination whenever you get data and make a list of data.
+
+
+//NOTES
+// Always make a seperate image table for image and use increnment way to store image.
+// Becs increnment way is much better than comma seperated becs operation is easy on it.
+// when yyou want to bilk upload anything  at ones always use map function for it.
+// always use increnment way to store id.

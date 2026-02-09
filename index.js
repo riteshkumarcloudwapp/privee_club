@@ -29,8 +29,12 @@ console.log(`Database connected to url ${database.url}`);
 
 //..........start user routes..........
 
-//user register
-import { router as userRouter } from "./src/api/user/auth/index.js";
+//Auth User
+import { router as authUserRouter } from "./src/api/user/auth/index.js";
+app.use("/api/auth", authUserRouter);
+
+//User profile and info
+import { router as userRouter } from "./src/api/user/user/index.js";
 app.use("/api/user", userRouter);
 
 app.listen(config.PORT, (req, res) => {

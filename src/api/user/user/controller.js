@@ -1,7 +1,8 @@
-import { Messages } from "openai/resources/chat/completions.js";
 import User from "../../../models/User.js";
-import WhatAreYouLookingFor from "../../../models/WhatAreYouLookingFor.js";
 import Joi from "joi";
+import LookingForOption from "../../../models/LookingForOption.js";
+import UserLookingFor from "../../../models/UserLookingFor.js";
+import fs from "fs";
 
 //...............USER SIGN-UP................................
 
@@ -91,29 +92,26 @@ export const updateUserProfile = async (req, res) => {
 
       /* ================= RELATIONSHIP GOAL ================= */
       case "relationship_goal":
-        if (!value) {
+        if (!Array.isArray(value) || value.length === 0) {
           return res.status(400).json({
             status: false,
-            message: "Relationship goal is required",
+            message: "Relationship goal must be a non-empty array",
           });
         }
 
-        // find existing relationship goal
-        const existingGoal = await WhatAreYouLookingFor.findOne({
+        //Remove old relations
+        await UserLookingFor.destroy({
           where: { user_id: id },
         });
 
-        if (existingGoal) {
-          // update
-          existingGoal.looking_for = value;
-          await existingGoal.save();
-        } else {
-          // create
-          await WhatAreYouLookingFor.create({
-            user_id: id,
-            looking_for: value,
-          });
-        }
+        //Insert new relations
+        const rows = value.map((optionId) => ({
+          user_id: id,
+          looking_for_option_id: optionId,
+        }));
+
+        await UserLookingFor.bulkCreate(rows);
+
         break;
 
       default:
@@ -138,7 +136,7 @@ export const updateUserProfile = async (req, res) => {
 };
 
 //update userInfo
-export const userInfo = async (req, res) => {
+export const updateUserInfo = async (req, res) => {
   try {
     // get data from client side.
     const { id } = req.user;
@@ -238,7 +236,7 @@ export const userInfo = async (req, res) => {
   }
 };
 
-//..........USER PROFILE DETAILS...............................
+//..........USER PROFILE DETAILS.(3rd figma)..............................
 
 //get user profile details
 export const getUserProfile = async (req, res) => {
@@ -255,8 +253,8 @@ export const getUserProfile = async (req, res) => {
       });
     }
 
-    const userData = user.toJSON();
-    userData.age = calculateAge(userData.dob);
+    // const userData = user.toJSON();
+    // userData.age = calculateAge(userData.dob);
 
     // response
     return res.status(201).json({
@@ -301,12 +299,19 @@ export const updateUser = async (req, res) => {
           });
         }
 
+        //delete old image from local storage
+        if (user.best_pic) {
+          fs.unlink(user.best_pic, (err) => {
+            if (err) console.error("Error deleting old image:", err);
+          });
+        }
+
         //update the image
         user.best_pic = req.file.path;
         await user.save();
         break;
 
-      //....profile_name.........
+      //..........profile_name............
       case "profile_name":
         if (!value) {
           return res.status(401).json({
@@ -422,11 +427,19 @@ export const updateUser = async (req, res) => {
         break;
       }
 
-      //........gallery..........
-      case "gallery":
+      default:
+        return res.status(400).json({
+          status: false,
+          message: "Invalid type",
+        });
     }
+
+    return res.status(200).json({
+      status: true,
+      message: "Profile updated successfully",
+    });
   } catch (error) {
-    console.log("updateUser error", error);
+    console.error("Update User Profile Error:", error);
     return res.status(500).json({
       status: false,
       message: "Internal server error",

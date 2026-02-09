@@ -1,19 +1,37 @@
 import express from "express";
-import { updateUserProfile, userInfo } from "./controller.js";
-import authauthenticateToken from "../../../common/middleware/jetToken.middleware.js";
+import {
+  updateUserProfile,
+  updateUserInfo,
+  getUserProfile,
+  updateUser,
+} from "./controller.js";
+import { authenticateToken } from "../../../common/middleware/jwtToken.middleware.js";
 
 import createMulter from "../../../utils/multer.js";
 const upload = createMulter("user");
 
 const router = express.Router();
 
+//update user profile
 router.post(
-  "/update",
-  authauthenticateToken,
+  "/user-profile",
+  authenticateToken,
   upload.single("best_pic"),
   updateUserProfile,
 );
 
-router.post("/user-info", authauthenticateToken, userInfo);
+//update user-info fileds
+router.post("/user-info", authenticateToken, updateUserInfo);
 
-export default router;
+//get user profile details
+router.get("/user-detail", authenticateToken, getUserProfile);
+
+//.......Update routes (3rd figma)............
+router.post(
+  "/update-user",
+  authenticateToken,
+  upload.single("best_pic"),
+  updateUser,
+);
+
+export { router };

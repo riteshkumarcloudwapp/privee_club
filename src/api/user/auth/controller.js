@@ -44,7 +44,6 @@ export const userSignUp = async (req, res) => {
     if (existUser) {
       return res.status(401).json({
         status: false,
-        data: existUser,
         message: "User already exist!!",
       });
     }
@@ -53,7 +52,7 @@ export const userSignUp = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // create user
-    const user = User.create({
+    const user = await User.create({
       first_name,
       last_name,
       profile_name,
@@ -64,8 +63,8 @@ export const userSignUp = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(501).json({
-        statu: false,
+      return res.status(500).json({
+        status: false,
         message: "Something went Wrong!!",
       });
     }
@@ -77,8 +76,8 @@ export const userSignUp = async (req, res) => {
     });
   } catch (error) {
     console.log("sign-up Error:", error);
-    return res.status(501).json({
-      status: false,
+    return res.status(500).json({
+      status: true,
       message: "Internal server error!!",
       error: error.message,
     });
