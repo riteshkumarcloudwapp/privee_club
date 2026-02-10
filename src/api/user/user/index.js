@@ -3,7 +3,10 @@ import {
   updateUserProfile,
   updateUserInfo,
   getUserProfile,
-  updateUser,
+  editProfile,
+  uploadUserPhotos,
+  deletePhotos,
+  userShout,
 } from "./controller.js";
 import { authenticateToken } from "../../../common/middleware/jwtToken.middleware.js";
 
@@ -26,12 +29,25 @@ router.post("/user-info", authenticateToken, updateUserInfo);
 //get user profile details
 router.get("/user-detail", authenticateToken, getUserProfile);
 
-//.......Update routes (3rd figma)............
+//edit user profile
 router.post(
-  "/update-user",
+  "/edit-profile",
   authenticateToken,
   upload.single("best_pic"),
-  updateUser,
+  editProfile,
 );
+
+//upload user photos
+router.post(
+  "/user-photos",
+  authenticateToken,
+  upload.array("image", 10),
+  uploadUserPhotos,
+);
+
+//delete user photos
+router.post("/delete-photos/:photoId", authenticateToken, deletePhotos);
+
+//user-shoutOut
 
 export { router };

@@ -4,6 +4,8 @@ import dbConfig from "../common/config/db.js";
 import User from "./User.js";
 import LookingForOption from "./LookingForOption.js";
 import UserLookingFor from "./UserLookingFor.js";
+import UserPhoto from "./UserPhotos.js";
+import UserShoutOut from "./UserShoutOut.js";
 
 const sequelize = new Sequelize(dbConfig.url, {
   ...dbConfig,
@@ -13,6 +15,8 @@ const models = {
   User,
   LookingForOption,
   UserLookingFor,
+  UserPhoto,
+  UserShoutOut,
 };
 
 // Setup associations

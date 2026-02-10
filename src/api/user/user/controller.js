@@ -2,7 +2,9 @@ import User from "../../../models/User.js";
 import Joi from "joi";
 import LookingForOption from "../../../models/LookingForOption.js";
 import UserLookingFor from "../../../models/UserLookingFor.js";
+import UserPhoto from "../../../models/UserPhotos.js";
 import fs from "fs";
+import path from "path";
 
 //...............USER SIGN-UP................................
 
@@ -273,7 +275,7 @@ export const getUserProfile = async (req, res) => {
 };
 
 // update user details (single api)
-export const updateUser = async (req, res) => {
+export const editProfile = async (req, res) => {
   try {
     // get data from client
     const { id } = req.user;
@@ -323,7 +325,7 @@ export const updateUser = async (req, res) => {
         await user.save();
         break;
 
-      //.....city......
+      //.......city..........
       case "city":
         if (!value) {
           return res.status(400).json({
@@ -333,6 +335,30 @@ export const updateUser = async (req, res) => {
         }
         user.city = value.trim();
         await user.save();
+        break;
+
+      /* ================= AGE → DOB ================= */
+      case "age":
+        if (!value || isNaN(value)) {
+          return res.status(400).json({
+            status: false,
+            message: "Valid age is required",
+          });
+        }
+
+        const age = parseInt(value, 10);
+        const today = new Date();
+
+        // Calculate DOB from age
+        const dob = new Date(
+          today.getFullYear() - age,
+          today.getMonth(),
+          today.getDate(),
+        );
+
+        user.age = age;
+        user.dob = dob;
+
         break;
 
       /* ================= RELATIONSHIP GOAL ================= */
@@ -345,31 +371,48 @@ export const updateUser = async (req, res) => {
         }
 
         // find existing relationship goal
-        const existingGoal = await WhatAreYouLookingFor.findOne({
+        const existingGoal = await UserLookingFor.findAll({
           where: { user_id: id },
         });
 
-        existingGoal.looking_for = value;
-        await existingGoal.save();
+        // delete the old ones
+        await UserLookingFor.destroy({
+          where: { user_id: id },
+        });
+
+        // insert new ones
+        const rows = value.map((optionId) => ({
+          user_id: id,
+          looking_for_option_id: optionId,
+        }));
+        await UserLookingFor.bulkCreate(rows);
         break;
 
-      //..........About..........
-      case "about": {
-        const validation = Joi.object({
-          about_me: Joi.string().trim().required(),
-          my_perfect_match: Joi.string().trim().required(),
-        });
-        const { error } = validation.validate(value);
-        if (error) return res.json({ status: false, message: error.message });
-
-        user.update({
-          about: value.about_me,
-          about_perfect_match: value.my_perfect_match,
-        });
+      /* ================= ABOUT ME ================= */
+      case "about_me":
+        if (!value) {
+          return res.status(400).json({
+            status: false,
+            message: "About me is required",
+          });
+        }
+        user.about_me = value;
+        await user.save();
         break;
-      }
 
-      //.......info..........
+      /* ================= PERFECT MATCH ================= */
+      case "about_perfect_match":
+        if (!value) {
+          return res.status(400).json({
+            status: false,
+            message: "About perfect match is required",
+          });
+        }
+        user.about_perfect_match = value;
+        await user.save();
+        break;
+
+      //...............info...................
       case "info": {
         const validation = Joi.object({
           age: Joi.number().integer().min(18).max(100).required(),
@@ -396,10 +439,10 @@ export const updateUser = async (req, res) => {
           favorite_sport: Joi.string().max(255).allow(null, ""),
         });
 
-        const { error } = validation.validate({ value });
+        const { error } = validation.validate(value);
         if (error) return res.json({ status: false, message: error.message });
 
-        user.create({
+        await user.update({
           age: value.age,
           height: value.height,
           weight: value.weight,
@@ -423,7 +466,6 @@ export const updateUser = async (req, res) => {
           favorite_book: value.favorite_book,
           favorite_sport: value.favorite_sport,
         });
-        user.save();
         break;
       }
 
@@ -441,6 +483,122 @@ export const updateUser = async (req, res) => {
   } catch (error) {
     console.error("Update User Profile Error:", error);
     return res.status(500).json({
+      status: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+//upload user photos
+export const uploadUserPhotos = async (req, res) => {
+  try {
+    const { id } = req.user;
+    const { type } = req.body; // 0 = gallery, 1 = private
+
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(401).json({
+        status: false,
+        message: "User not found!!",
+      });
+    }
+
+    // validate files
+    if (!req.files || req.files.length === 0) {
+      return res.status(401).json({
+        status: false,
+        message: "Atleast one image required!!",
+      });
+    }
+
+    // prepare bulk data
+    const imagesData = req.files.map((file) => ({
+      user_id: id,
+      image: file.path,
+      title: type,
+    }));
+
+    // bulk insert
+    await UserPhoto.bulkCreate(imagesData);
+
+    return res.status(200).json({
+      status: true,
+      message:
+        type == 0
+          ? "Gallery photos uploaded successfully"
+          : "Private photos uploaded successfully",
+    });
+  } catch (error) {
+    console.log("user photos error", error);
+    return res.status(500).json({
+      status: false,
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+};
+
+//update user photos
+export const deletePhotos = async (req, res) => {
+  try {
+    const user_id = req.user?.id;
+    const { photoId } = req.params;
+
+    if (!photoId) {
+      return res.status(401).json({
+        status: false,
+        message: "photoId is required!!",
+      });
+    }
+
+    //fetch photo
+    const photo = await UserPhoto.findOne({
+      where: {
+        id: photoId,
+        user_id: user_id,
+      },
+    });
+    // console.log("-----", photo);
+    if (!photo) {
+      return res.status(404).json({
+        status: false,
+        message: "Photo not found or not authorized",
+      });
+    }
+
+    //  get ABSOLUTE path
+    const absolutePath = path.join(process.cwd(), photo.image);
+    // console.log("absolutrePtah", absolutePath);
+
+    // delete file from local storage
+    if (photo.image && fs.existsSync(absolutePath)) {
+      fs.unlinkSync(absolutePath);
+    }
+
+    // destroy from db
+    await photo.destroy();
+
+    return res.status(201).json({
+      status: true,
+      message: "Image removed successfully!!",
+    });
+  } catch (error) {
+    console.log("deletePhotos error", error);
+    return res.status(500).json({
+      status: false,
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+};
+
+//user shout-out
+export const userShout = async (req, res) => {
+  try {
+  } catch (error) {
+    console.log("User ShoutOut error", error);
+    return res.json({
       status: false,
       message: "Internal server error",
       error: error.message,

@@ -3,8 +3,9 @@
  * @returns { Promise<void> }
  */
 export function up(knex) {
-  return knex.schema.createTable("gallerys", (table) => {
+  return knex.schema.createTable("user_shoutOuts", (table) => {
     table.increments("id").primary();
+
     table
       .integer("user_id")
       .unsigned()
@@ -12,7 +13,11 @@ export function up(knex) {
       .references("id")
       .inTable("users")
       .onDelete("CASCADE");
-    table.string("images").notNullable();
+
+    table.text("image").nullable();
+
+    table.text("shout_out").nullable();
+
     table.timestamps(true, true);
   });
 }
@@ -22,5 +27,5 @@ export function up(knex) {
  * @returns { Promise<void> }
  */
 export function down(knex) {
-  return knex.schema.dropTableIfExists("gallerys");
+  return knex.schema.dropTable("user_shoutOuts");
 }
