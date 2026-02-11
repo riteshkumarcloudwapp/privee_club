@@ -3,6 +3,7 @@ import User from "../../../models/User.js";
 import bcrypt from "bcrypt";
 import { Op } from "sequelize";
 import generateToken from "./service.js";
+import { sendEmailSMTP } from "../../../utils/emailService.js";
 
 // USER SIGN-UP
 export const userSignUp = async (req, res) => {
@@ -48,6 +49,11 @@ export const userSignUp = async (req, res) => {
       });
     }
 
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    // Expiry in 10 minutes
+    const expiry_time = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+
     // password hashed
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -60,7 +66,24 @@ export const userSignUp = async (req, res) => {
       mobile_number,
       language,
       password: hashedPassword,
+      otp,
+      expiry_time,
     });
+
+    // SEND OTP VIA NODEMAILER
+    const emailResult = await sendEmailSMTP({
+      to: email,
+      name: `${first_name} ${last_name}`,
+      otp,
+    });
+
+    if (!emailResult.success) {
+      return res.status(500).json({
+        status: false,
+        message: "Failed to send OTP email",
+        error: emailResult.message,
+      });
+    }
 
     if (!user) {
       return res.status(500).json({
@@ -142,6 +165,17 @@ export const userSignIn = async (req, res) => {
 };
 
 // EMAIL VERIFICATION CODE AFTER REGISTRATION
+export const emailVerification = async (req, res) => {
+  try {
+  } catch (error) {
+    console.log("emialVerification error", error);
+    return res.status(500).json({
+      status: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
 
 //CHANGE PASSWORD
 export const changePassword = async (req, res) => {

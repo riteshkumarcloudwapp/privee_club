@@ -29,3 +29,48 @@
 // Becs increnment way is much better than comma seperated becs operation is easy on it.
 // when yyou want to bilk upload anything  at ones always use map function for it.
 // always use increnment way to store id.
+
+
+//Register user
+Validate data
+Check user exist
+Generate OTP
+Store OTP
+Send OTP
+Create user ONLY after OTP verification
+
+OTP in registration is used to:
+
+✅ Verify ownership
+
+✅ Prevent fake accounts
+
+✅ Increase security
+
+✅ Activate account safely
+
+✅ Enable password reset later
+
+
+
+What is a Templating Engine?
+
+A templating engine allows you to:
+
+Write normal HTML
+
+Insert dynamic data inside it
+
+Render it from backend
+
+📌 What is Handlebars (HBS)?
+
+Handlebars is:
+
+A simple HTML templating engine
+
+Logic-less (very minimal logic inside HTML)
+
+Commonly used with Express
+
+It uses {{ }} syntax.

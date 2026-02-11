@@ -1,6 +1,5 @@
-// models/UserShoutOut.js
 import { DataTypes } from "sequelize";
-import sequelize from "../config/database.js"; // adjust path if needed
+import sequelize from "../config/database.js"; // adjust path
 
 const UserShoutOut = sequelize.define(
   "UserShoutOut",
@@ -17,17 +16,20 @@ const UserShoutOut = sequelize.define(
     },
 
     image: {
-      type: DataTypes.TEXT,
-      allowNull: true,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
 
     shout_out: {
-      type: DataTypes.TEXT,
-      allowNull: true,
+      type: DataTypes.STRING(140),
+      allowNull: false,
+      validate: {
+        len: [1, 140],
+      },
     },
   },
   {
-    tableName: "user_shoutOuts",
+    tableName: "user_shout_out",
     timestamps: true,
     createdAt: "created_at",
     updatedAt: "updated_at",

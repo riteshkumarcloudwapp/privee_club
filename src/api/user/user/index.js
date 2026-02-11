@@ -6,7 +6,7 @@ import {
   editProfile,
   uploadUserPhotos,
   deletePhotos,
-  userShout,
+  giveShoutout,
 } from "./controller.js";
 import { authenticateToken } from "../../../common/middleware/jwtToken.middleware.js";
 
@@ -49,5 +49,11 @@ router.post(
 router.post("/delete-photos/:photoId", authenticateToken, deletePhotos);
 
 //user-shoutOut
+router.post(
+  "/user-shoutout",
+  authenticateToken,
+  upload.single("image"),
+  giveShoutout,
+);
 
 export { router };

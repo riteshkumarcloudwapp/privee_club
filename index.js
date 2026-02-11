@@ -16,8 +16,11 @@ app.use("/assets", express.static(path.join(process.cwd(), "assets")));
 // file upload on local
 app.use("/assets", express.static("assets"));
 
-// view engine set .
-// app.set("view engine", ejs);
+// Serve static files from src/templates
+app.use(
+  "/templates",
+  express.static(path.join(process.cwd(), "src/templates")),
+);
 
 app.get("/", (req, res) => {
   res.send("hello from server");

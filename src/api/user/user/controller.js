@@ -3,6 +3,7 @@ import Joi from "joi";
 import LookingForOption from "../../../models/LookingForOption.js";
 import UserLookingFor from "../../../models/UserLookingFor.js";
 import UserPhoto from "../../../models/UserPhotos.js";
+import UserShoutOut from "../../../models/UserShoutOut.js";
 import fs from "fs";
 import path from "path";
 
@@ -337,27 +338,27 @@ export const editProfile = async (req, res) => {
         await user.save();
         break;
 
-      /* ================= AGE → DOB ================= */
-      case "age":
-        if (!value || isNaN(value)) {
+      //.......DOB..........
+      case "dob":
+        if (!value) {
           return res.status(400).json({
             status: false,
-            message: "Valid age is required",
+            message: "DOB is required",
           });
         }
 
-        const age = parseInt(value, 10);
-        const today = new Date();
+        // Validate format YYYY-MM-DD
+        const regex = /^\d{4}-\d{2}-\d{2}$/;
 
-        // Calculate DOB from age
-        const dob = new Date(
-          today.getFullYear() - age,
-          today.getMonth(),
-          today.getDate(),
-        );
+        if (!regex.test(value)) {
+          return res.status(400).json({
+            status: false,
+            message: "DOB must be in YYYY-MM-DD format",
+          });
+        }
 
-        user.age = age;
-        user.dob = dob;
+        user.dob = value;
+        await user.save();
 
         break;
 
@@ -594,8 +595,45 @@ export const deletePhotos = async (req, res) => {
 };
 
 //user shout-out
-export const userShout = async (req, res) => {
+export const giveShoutout = async (req, res) => {
   try {
+    const user_id = req.user?.id;
+    const { shout_out } = req.body;
+
+    const validation = Joi.object({
+      shout_out: Joi.string().trim().min(1).max(140).required(),
+    });
+    const { error } = validation.validate(req.body);
+    if (error) return res.json({ status: false, message: error.message });
+
+    // check for file data.
+    if (!req.file) {
+      return res.status(401).json({
+        status: false,
+        Messages: "Image is required!!",
+      });
+    }
+    const imagePath = req.file.path;
+
+    //create shouout
+    const shouout = await UserShoutOut.create({
+      user_id,
+      image: imagePath,
+      shout_out: shout_out,
+    });
+
+    if (!shouout) {
+      return res.status(500).json({
+        status: false,
+        message: "Something went wrong",
+      });
+    }
+
+    return res.status(201).json({
+      status: true,
+      message: "shoutOut created successfull!!",
+      data: shouout,
+    });
   } catch (error) {
     console.log("User ShoutOut error", error);
     return res.json({

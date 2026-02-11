@@ -235,6 +235,15 @@ const User = sequelize.define(
       allowNull: true,
     },
 
+    otp: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    expiry_time: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+
     is_active: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,

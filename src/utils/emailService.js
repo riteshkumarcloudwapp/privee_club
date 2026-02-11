@@ -1,49 +1,41 @@
 import nodemailer from "nodemailer";
-import hbs from "hbs";
-import path from "path";
-import { fileURLToPath } from "url";
+import handlebars from "handlebars";
+import fs from "fs";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Create a transporter using Gmail
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
-// register template folder once
-hbs.registerPartials(path.join(__dirname, "../templates"));
-
-const sendEmailSMTP = async (to, subject, templateName, data = {}) => {
+export const sendEmailSMTP = async ({ to, name, otp }) => {
   try {
-    // load & compile template
-    const templatePath = path.join(
-      __dirname,
-      "../templates",
-      `${templateName}.html`,
-    );
+    // 1️⃣ Read template file
+    const source = fs.readFileSync("templates/otpEmail.hbs", "utf8");
 
-    const html = hbs.compile(
-      await import("fs").then((fs) => fs.readFileSync(templatePath, "utf8")),
-    )(data);
+    // 2️⃣ Compile template
+    const template = handlebars.compile(source);
 
-    // transporter
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
+    const htmlToSend = template({
+      name,
+      otp,
+      year: new Date().getFullYear(),
     });
 
-    // send mail
-    const info = await transporter.sendMail({
-      from: `"Tawazun" <${process.env.EMAIL_USER}>`,
+    // 3️⃣ Send email
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
       to,
-      subject,
-      html,
+      subject: "Email Verification - Privee",
+      html: htmlToSend,
     });
 
-    return { success: true, messageId: info.messageId };
+    return { success: true, message: "Email sent successfully" };
   } catch (error) {
     console.error("Email error:", error);
     return { success: false, message: error.message };
   }
 };
-
-export default sendEmailSMTP;

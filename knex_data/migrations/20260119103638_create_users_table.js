@@ -113,6 +113,9 @@ export function up(knex) {
       ])
       .nullable();
 
+    table.string("otp").nullable();
+    table.timestamp("expiry_time").nullable();
+
     table.boolean("is_active").defaultTo(false);
 
     table.timestamps(true, true);

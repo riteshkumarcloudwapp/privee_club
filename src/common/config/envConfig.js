@@ -11,6 +11,8 @@ const config = {
   DB_PASSWORD: process.env.DB_PASSWORD,
   STATIC_KEY: process.env.STATIC_KEY,
   JWT_SECRET: process.env.JWT_SECRET,
+  EMAIL_USER: process.env.EMAIL_USER,
+  EMAIL_PASS: process.env.EMAIL_PASS,
 };
 
 export default config;
