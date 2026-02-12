@@ -74,3 +74,35 @@ Logic-less (very minimal logic inside HTML)
 Commonly used with Express
 
 It uses {{ }} syntax.
+
+
+// Email sending steps
+1.Install Nodemailer -> its a mail sending nodejs library. This package enables us to send emails from our Node.js applications using various email services (like Gmail, Outlook, etc.)to other people
+2.Create a Transporter Object ->  This object contains the configuration for your email service's SMTP server and your authentication details.
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail', // Use well-known service name or specify host/port
+  auth: {
+    user: 'your-email@gmail.com', // Your email address
+    pass: 'your-app-password'   // Your generated App Password
+  }
+});
+
+3.Define Mail Options -> Create an object that defines the content and recipients of the email.
+const mailOptions = {
+  from: '"Your Name" <your-email@gmail.com>', // Sender address and name
+  to: 'recipient-email@example.com, another-recipient@example.com', // List of receivers (comma-separated or array)
+  subject: 'Hello from Nodemailer!', // Subject line
+  text: 'This is the plain text body of the email.', // Plain text body
+  html: '<b>This is the HTML body of the email.</b>' // HTML body (optional)
+};
+
+4.Send the Email -> Use the transporter.sendMail() method, passing the mailOptions object and a callback function to handle the response or any errors.
+transporter.sendMail(mailOptions, (error, info) => {
+  if (error) {
+    console.error('Error sending email:', error);
+  } else {
+    console.log('Email sent:', info.response);
+  }
+});

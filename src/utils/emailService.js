@@ -1,41 +1,46 @@
 import nodemailer from "nodemailer";
-import handlebars from "handlebars";
-import fs from "fs";
+import hbs from "handlebars";
+import path from "path";
+import { fileURLToPath } from "url";
 
-// Create a transporter using Gmail
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-export const sendEmailSMTP = async ({ to, name, otp }) => {
+const sendEmailSMTP = async (to, subject, templateName, data = {}) => {
   try {
-    // 1️⃣ Read template file
-    const source = fs.readFileSync("templates/otpEmail.hbs", "utf8");
+    // load & compile template
+    const templatePath = path.join(
+      __dirname,
+      "../templates",
+      `${templateName}.html`,
+    );
 
-    // 2️⃣ Compile template
-    const template = handlebars.compile(source);
+    const html = hbs.compile(
+      await import("fs").then((fs) => fs.readFileSync(templatePath, "utf8")),
+    )(data);
 
-    const htmlToSend = template({
-      name,
-      otp,
-      year: new Date().getFullYear(),
+    // transporter
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
     });
 
-    // 3️⃣ Send email
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    // send mail
+    const info = await transporter.sendMail({
+      from: `"Privee" <${process.env.EMAIL_USER}>`,
       to,
-      subject: "Email Verification - Privee",
-      html: htmlToSend,
+      subject,
+      html,
     });
 
-    return { success: true, message: "Email sent successfully" };
+    return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error("Email error:", error);
     return { success: false, message: error.message };
   }
 };
+
+export default sendEmailSMTP;

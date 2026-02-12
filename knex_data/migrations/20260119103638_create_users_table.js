@@ -115,6 +115,7 @@ export function up(knex) {
 
     table.string("otp").nullable();
     table.timestamp("expiry_time").nullable();
+    table.boolean("is_verified").defaultTo(false);
 
     table.boolean("is_active").defaultTo(false);
 
