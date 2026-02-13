@@ -471,5 +471,3 @@ export const userLogout = async (req, res) => {
     });
   }
 };
-
-// SOCIAL AUTHENTICATION (GOOGLE , FACEBOOK , APPLE)
