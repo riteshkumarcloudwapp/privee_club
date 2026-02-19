@@ -118,7 +118,7 @@ export function up(knex) {
     table.boolean("is_verified").defaultTo(false);
 
     table.boolean("is_active").defaultTo(false);
-
+    table.string("role").defaultTo("user");
     table.timestamps(true, true);
   });
 }

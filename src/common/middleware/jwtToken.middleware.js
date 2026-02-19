@@ -17,16 +17,30 @@ export const authenticateToken = async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, config.JWT_SECRET);
     req.decoded = decoded;
-    const { id } = decoded;
+    const { id, role } = decoded;
 
-    const user = await models.User.findByPk(id);
-    if (!user) {
-      return res.status(403).json({
-        status: false,
-        message: "Authentication failed. User not authorized.",
-      });
+    // role based auth
+    let user;
+
+    if (role === "admin") {
+      user = await models.Admin.findByPk(id);
+      if (!user) {
+        return res.status(403).json({
+          status: false,
+          message: "Authentication failed. Admin not authorized.",
+        });
+      }
+      req.admin = user;
+    } else {
+      user = await models.User.findByPk(id);
+      if (!user) {
+        return res.status(403).json({
+          status: false,
+          message: "Authentication failed. User not authorized.",
+        });
+      }
+      req.user = user;
     }
-    req.user = user;
 
     next();
   } catch (error) {

@@ -1,0 +1,37 @@
+
+<!doctype html>
+<html lang="en">
+
+  <!--begin::Head-->
+  <%- include('../components/head.ejs') %>
+  <!--end::Head-->
+
+  <!--begin::Body-->
+  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+    <!--begin::App Wrapper-->
+    <div class="app-wrapper">
+
+      <!--begin::Header-->
+     <%- include('../components/header.ejs') %>
+      <!--end::Header-->
+
+      <!--begin::Sidebar-->
+      <%- include('../components/aside.ejs') %>
+      <!--end::Sidebar-->
+
+       <!-- Page Content -->
+      <%- include('../dashboard/index.ejs') %>
+
+      <!--begin::Footer-->
+      <%- include('../components/footer.ejs') %>
+      <!--end::Footer-->
+
+    </div>
+    <!--end::App Wrapper-->
+    <!--begin::Script-->
+    <%- include('../components/scripts.ejs') %>
+    <!--end::Script-->
+  </body>
+  <!--end::Body-->
+</html>
+

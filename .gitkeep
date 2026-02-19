@@ -106,3 +106,37 @@ transporter.sendMail(mailOptions, (error, info) => {
     console.log('Email sent:', info.response);
   }
 });
+
+
+//////////////////////////////////////
+./ → current folder
+
+../ → parent folder
+
+
+/////////////////////////////////////////
+1️⃣ What is __dirname?
+It gives you the absolute path of the current file’s directory. ->/home/ritesh/project/routes/user.js
+
+✅ 2️⃣ What is path.join()?
+
+path.join() comes from Node's built-in Node.js path module.
+
+It safely joins multiple path segments into one correct path for your OS.
+
+
+
+//////////////////////////////////////
+Why Use process.cwd() Instead of __dirname?
+
+If this code is inside server.js (root file):
+
+Both usually work.
+
+But if it's inside another folder (like config/app.js):
+
+__dirname → gives that file's folder
+
+process.cwd() → gives project root
+
+For static folders in root or server, process.cwd() is often safer.

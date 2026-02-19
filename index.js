@@ -7,14 +7,11 @@ import path from "path";
 
 const app = express();
 
-//express middleware
+//express method middleware
 app.use(cors());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
-app.use("/assets", express.static(path.join(process.cwd(), "assets")));
-
-// file upload on local
-app.use("/assets", express.static("assets"));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use("/public", express.static(path.join(process.cwd(), "public"))); //Express will look inside your public folder and try to find logo.png.
 
 // Serve static files from src/templates
 app.use(
@@ -22,15 +19,23 @@ app.use(
   express.static(path.join(process.cwd(), "src/templates")),
 );
 
+//EJS as the view engine
+app.set("view engine", "ejs");
+app.set("views", path.join(process.cwd(), "src/views"));
+
 app.get("/", (req, res) => {
-  res.send("hello from server");
+  res.send("Hello from server");
 });
 
 // database connectivity
 database;
 console.log(`Database connected to url ${database.url}`);
 
-//..........start user routes..........
+//...............ADMIN ROUTES...........................
+import { router as adminRouter } from "./src/api/admin/admin_auth/index.js";
+app.use("/admin", adminRouter);
+
+//................USER ROUTES...........................
 
 //Auth User
 import { router as authUserRouter } from "./src/api/user/auth/index.js";

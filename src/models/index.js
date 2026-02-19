@@ -7,6 +7,7 @@ import UserLookingFor from "./UserLookingFor.js";
 import UserPhoto from "./UserPhotos.js";
 import UserShoutOut from "./UserShoutOut.js";
 import UserPasswordReset from "./UserPasswordReset.js";
+import Admin from "./Admin.js";
 
 const sequelize = new Sequelize(dbConfig.url, {
   ...dbConfig,
@@ -19,6 +20,7 @@ const models = {
   UserPhoto,
   UserShoutOut,
   UserPasswordReset,
+  Admin,
 };
 
 // Setup associations

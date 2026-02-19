@@ -15,6 +15,7 @@ const sendEmailSMTP = async (to, subject, templateName, data = {}) => {
       `${templateName}.html`,
     );
 
+    // to send the data to the template and get the html
     const html = hbs.compile(
       await import("fs").then((fs) => fs.readFileSync(templatePath, "utf8")),
     )(data);
