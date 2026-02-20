@@ -1,0 +1,39 @@
+<% if (success && success.length > 0) { %>
+  <div style="
+      position:fixed;
+      top:20px;
+      right:20px;
+      z-index:9999;
+      min-width:300px;
+    ">
+    <div class="alert alert-success alert-dismissible fade show auto-dismiss">
+      <%= success %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  </div>
+<% } %>
+
+<% if (error && error.length > 0) { %>
+  <div style="
+      position:fixed;
+      top:20px;
+      right:20px;
+      z-index:9999;
+      min-width:300px;
+    ">
+    <div class="alert alert-danger alert-dismissible fade show auto-dismiss">
+      <%= error %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  </div>
+<% } %>
+
+<script>
+  setTimeout(() => {
+    document.querySelectorAll('.auto-dismiss').forEach(el => {
+      el.classList.remove('show');
+      el.classList.add('hide');
+      setTimeout(() => el.remove(), 300);
+    });
+  }, 4000); // 4 seconds
+</script>

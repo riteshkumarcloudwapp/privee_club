@@ -4,6 +4,8 @@ import bodyParser from "body-parser";
 import config from "./src/common/config/envConfig.js";
 import database from "./src/common/config/db.js";
 import path from "path";
+import session from "express-session";
+import flash from "connect-flash";
 
 const app = express();
 
@@ -23,8 +25,30 @@ app.use(
 app.set("view engine", "ejs");
 app.set("views", path.join(process.cwd(), "src/views"));
 
+//Configure Session
+app.use(
+  session({
+    secret: config.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false, // VERY IMPORTANT for localhost //flash will not work if true.
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60, // 1 hour
+    },
+  }),
+);
+
+// config flash
+app.use(flash());
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  next();
+});
+
 app.get("/", (req, res) => {
-  res.send("Hello from server");
+  return res.redirect("/admin/login");
 });
 
 // database connectivity
@@ -32,10 +56,16 @@ database;
 console.log(`Database connected to url ${database.url}`);
 
 //...............ADMIN ROUTES...........................
-import { router as adminRouter } from "./src/api/admin/admin_auth/index.js";
+
+//Admin Auth
+import { router as adminRouter } from "./src/api/Admin/admin_auth/index.js";
 app.use("/admin", adminRouter);
 
-//................USER ROUTES...........................
+//Admin Home
+import { router as homeRouter } from "./src/api/Admin/home/index.js";
+app.use("/admin", homeRouter);
+
+//................USER ROUTES.............................
 
 //Auth User
 import { router as authUserRouter } from "./src/api/user/auth/index.js";

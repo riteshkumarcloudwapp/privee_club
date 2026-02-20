@@ -43,13 +43,14 @@ export const adminLogin = async (req, res) => {
         role: "admin",
       });
 
-      // Store inside session
+      // If login success
       req.session.admin = {
         id: admin.id,
         email: admin.email,
-        token,
+        role: admin.role,
       };
 
+      req.flash("success", "Admin login successful!");
       return res.redirect("/admin/dashboard");
     }
 
@@ -80,13 +81,9 @@ export const adminDashboard = async (req, res) => {
 
 //Admin logout
 export const adminLogout = (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      console.log("Session destroy error:", err);
-      return res.redirect("/admin/dashboard");
-    }
+  delete req.session.admin;
 
-    res.clearCookie("connect.sid"); // remove session cookie
-    return res.redirect("/admin/login");
-  });
+  req.flash("success", "Admin logged out successfully!");
+
+  return res.redirect("/admin/login");
 };

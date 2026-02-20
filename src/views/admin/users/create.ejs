@@ -1,0 +1,77 @@
+<%- include('../layouts/master') %>
+
+
+<div class="card">
+  <div class="card-body p-0">
+
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped text-center mb-0">
+        
+        <thead style="background-color:#e8b4c7;">
+          <tr>
+            <th>S.No</th>
+            <th>Profile</th>
+            <th>User Name</th>
+            <th>Gender</th>
+            <th>Email</th>
+            <th>Mobile</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+<tbody>
+  <% if (users && users.length > 0) { %>
+
+    <% users.forEach((user, index) => { %>
+      <tr>
+        <td><%= index + 1 %></td>
+
+        <td>
+          <% if (user.profile) { %>
+            <img src="/uploads/<%= user.profile %>"
+                 width="45"
+                 height="45"
+                 class="rounded-circle"
+                 style="object-fit:cover;">
+          <% } else { %>
+            <img src="/uploads/default.png"
+                 width="45"
+                 height="45"
+                 class="rounded-circle">
+          <% } %>
+        </td>
+
+        <td><%= user.name %></td>
+        <td><%= user.gender %></td>
+        <td><%= user.email %></td>
+        <td><%= user.mobile %></td>
+
+        <td>
+          <a href="/admin/users/view/<%= user.id %>" 
+             class="btn btn-info btn-sm">View</a>
+
+          <a href="/admin/users/delete/<%= user.id %>" 
+             class="btn btn-danger btn-sm"
+             onclick="return confirm('Are you sure?')">
+             Delete
+          </a>
+        </td>
+      </tr>
+    <% }) %>
+
+  <% } else { %>
+
+    <tr>
+      <td colspan="7" class="text-muted py-4">
+        No users found.
+      </td>
+    </tr>
+
+  <% } %>
+</tbody>
+
+      </table>
+    </div>
+
+  </div>
+</div>

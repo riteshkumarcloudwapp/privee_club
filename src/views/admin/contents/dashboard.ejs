@@ -1,6 +1,7 @@
 
  <!--begin::App Main-->
       <main class="app-main">
+
         <!--begin::App Content Header-->
         <div class="app-content-header">
           <!--begin::Container-->
@@ -12,7 +13,7 @@
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
+                  <li class="breadcrumb-item"><a href="/admin/dashboard">Home</a></li>
                   <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
                 </ol>
               </div>
@@ -22,6 +23,9 @@
           <!--end::Container-->
         </div>
         <!--end::App Content Header-->
+
+         <!-- FLASH MESSAGE HERE -->
+       <%- include('../components/flash.ejs') %>
 
         <!--begin::App Content-->
         <div class="app-content">
@@ -34,9 +38,8 @@
                 <!--begin::Small Box Widget 1-->
                 <div class="small-box text-bg-primary">
                   <div class="inner">
-                    <h3>150</h3>
-
                     <p>Total Users</p>
+                    <h3 id="totalUsers">0</h3>
                   </div>
                   <svg
                     class="small-box-icon"
@@ -58,9 +61,9 @@
                 <!--begin::Small Box Widget 2-->
                 <div class="small-box text-bg-success">
                   <div class="inner">
-                    <h3>53<sup class="fs-5">%</sup></h3>
-
-                    <p>Male Users</p>
+                      <p>Male Users</p>
+                   <h3 id="totalMaleUsers">0</h3>
+                 
                   </div>
                   <svg
                     class="small-box-icon"
@@ -82,9 +85,9 @@
                 <!--begin::Small Box Widget 3-->
                 <div class="small-box text-bg-warning">
                   <div class="inner">
-                    <h3>44</h3>
-
                     <p>Female Users</p>
+                   <h3 id="totalFemaleUsers">0</h3>
+                   
                   </div>
                   <svg
                     class="small-box-icon"
@@ -106,9 +109,8 @@
                 <!--begin::Small Box Widget 4-->
                 <div class="small-box text-bg-danger">
                   <div class="inner">
-                    <h3>65</h3>
-
                     <p>Active Members</p>
+                    <h3>0</h3>
                   </div>
                   <svg
                     class="small-box-icon"
@@ -140,5 +142,31 @@
           <!--end::Container-->
         </div>
         <!--end::App Content-->
+
+
+      <script>
+      document.addEventListener("DOMContentLoaded", function () {
+
+     fetch("/admin/dashboard-stats")
+    .then(res => res.json())
+    .then(data => {
+      if (data.status) {
+        document.getElementById("totalUsers").innerText =
+          data.data.totalUsers;
+
+        document.getElementById("totalMaleUsers").innerText =
+          data.data.totalMaleUsers;
+
+        document.getElementById("totalFemaleUsers").innerText =
+          data.data.totalFemaleUsers;
+      }
+    })
+    .catch(err => console.log("Fetch error:", err));
+
+});
+</script>
+
+
+
       </main>
  <!--end::App Main-->

@@ -140,3 +140,55 @@ __dirname → gives that file's folder
 process.cwd() → gives project root
 
 For static folders in root or server, process.cwd() is often safer.
+
+
+
+🍪 1️⃣ Session + Cookie (Traditional Way - Best for EJS)
+
+
+// cookie with token 
+🔑 2️⃣ JWT + Cookie (Token-Based)
+🔹 How it works:
+
+User logs in
+
+Server generates a JWT token
+
+Token contains user data inside it
+
+Token is sent in cookie:  token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+On every request: cookie is sent to server and server verifies token
+
+Server verifies token
+
+If valid → user authenticated
+
+
+
+// SESSION WITH COOKIE
+1️⃣ User logs in  
+2️⃣ Server creates a session (stores user data in memory or database)    -> sessionId=abc123
+3️⃣ Server sends a cookie with session ID to the client
+4️⃣ Client stores cookie and sends it with every request
+5️⃣ Server checks session ID from cookie, retrieves session data, and authenticates user
+
+// express-session + connect-flash
+
+Flash messages work using:
+
+express-session
+
+connect-flash
+
+They are used for:
+
+Login success
+
+Login error
+
+Delete success
+
+Update success
+
+etc.
