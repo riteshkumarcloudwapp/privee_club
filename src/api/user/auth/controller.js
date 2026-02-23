@@ -223,10 +223,10 @@ export const userSignIn = async (req, res) => {
     if (error) return res.json({ status: false, message: error.message });
 
     // check if user exist or not.
-    const user = await User.findOne({
+    const existUser = await User.findOne({
       where: { email },
     });
-    if (!user) {
+    if (!existUser) {
       return res.status(401).json({
         status: false,
         message: "User not registered!!",
@@ -247,12 +247,12 @@ export const userSignIn = async (req, res) => {
 
     // Generate jwt token .
     const token = generateToken({
-      id: user.id,
+      id: existUser.id,
       role: "user",
     });
 
     // Convert Sequelize instance to plain object and remove password
-    const userData = user.get({ plain: true });
+    const userData = existUser.get({ plain: true });
     delete userData.password;
 
     // return response

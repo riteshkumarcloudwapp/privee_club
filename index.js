@@ -6,6 +6,7 @@ import database from "./src/common/config/db.js";
 import path from "path";
 import session from "express-session";
 import flash from "connect-flash";
+import expressEjsLayouts from "express-ejs-layouts";
 
 const app = express();
 
@@ -24,6 +25,10 @@ app.use(
 //EJS as the view engine
 app.set("view engine", "ejs");
 app.set("views", path.join(process.cwd(), "src/views"));
+
+// Use express-ejs-layouts
+app.use(expressEjsLayouts);
+app.set("layout", "admin/layouts/master");
 
 //Configure Session
 app.use(
@@ -47,23 +52,24 @@ app.use((req, res, next) => {
   next();
 });
 
+// dashboard
 app.get("/", (req, res) => {
-  return res.redirect("/admin/login");
+  res.json({ message: "Hello from the server" });
 });
 
 // database connectivity
 database;
 console.log(`Database connected to url ${database.url}`);
 
-//...............ADMIN ROUTES...........................
+//...............ADMIN ROUTES..............................
 
 //Admin Auth
-import { router as adminRouter } from "./src/api/Admin/admin_auth/index.js";
-app.use("/admin", adminRouter);
+import { router as adminRoutes } from "./src/api/Admin/admin_auth/index.js";
+app.use("/admin", adminRoutes);
 
 //Admin Home
-import { router as homeRouter } from "./src/api/Admin/home/index.js";
-app.use("/admin", homeRouter);
+import { router as homeRoutes } from "./src/api/Admin/home/index.js";
+app.use("/admin", homeRoutes);
 
 //................USER ROUTES.............................
 

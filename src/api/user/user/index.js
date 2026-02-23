@@ -27,7 +27,7 @@ router.post(
 router.post("/user-info", authenticateToken, updateUserInfo);
 
 //get user profile details
-router.get("/user-detail", authenticateToken, getUserProfile);
+router.get("/user-profile/:id", authenticateToken, getUserProfile);
 
 //edit user profile
 router.post(

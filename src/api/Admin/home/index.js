@@ -1,10 +1,20 @@
 import express from "express";
-import { getDashboardStats, getAllUsers } from "./controller.js";
+import { adminAuth } from "../../../common/middleware/adminAuth.js";
+import {
+  getDashboardStats,
+  getAllUsers,
+  viewUserById,
+  deleteUserById,
+} from "./controller.js";
 
 const router = express.Router();
 
 router.get("/dashboard-stats", getDashboardStats);
 
-router.get("/new-users", getAllUsers);
+router.get("/all-users", adminAuth, getAllUsers);
+
+router.get("/view-user/:id", adminAuth, viewUserById);
+
+router.get("/deleteUser/:id", adminAuth, deleteUserById);
 
 export { router };

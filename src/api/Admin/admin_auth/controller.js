@@ -37,11 +37,11 @@ export const adminLogin = async (req, res) => {
         });
       }
 
-      //jwt
-      const token = generateToken({
-        id: admin.id,
-        role: "admin",
-      });
+      // //jwt
+      // const token = generateToken({
+      //   id: admin.id,
+      //   role: "admin",
+      // });
 
       // If login success
       req.session.admin = {
@@ -54,7 +54,7 @@ export const adminLogin = async (req, res) => {
       return res.redirect("/admin/dashboard");
     }
 
-    return res.render("admin/pages/login");
+    res.render("admin/pages/login", { layout: false });
   } catch (error) {
     console.log("adminRegister error", error);
     return res.status(500).json({
@@ -68,7 +68,7 @@ export const adminLogin = async (req, res) => {
 //Admin dashboard
 export const adminDashboard = async (req, res) => {
   try {
-    return res.render("admin/layouts/master");
+    return res.render("admin/dashboard");
   } catch (error) {
     console.log("viewDashboard error", error);
     return res.status(500).json({

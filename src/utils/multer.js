@@ -6,7 +6,7 @@ const createMulter = (folderName = "others") => {
   const storage = multer.diskStorage({
     destination: (req, file, cb) => {
       const folder = folderName || "others";
-      const uploadPath = path.join("assets", folder); //assets/profile
+      const uploadPath = path.join("public", folder); //public/profile
 
       // if folder does not exist. so we will make directory.
       fs.mkdirSync(uploadPath, { recursive: true });
