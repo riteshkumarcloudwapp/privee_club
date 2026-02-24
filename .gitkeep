@@ -202,6 +202,3 @@ i want user http://localhost:5000/admin/all-users he should not be awwlowed to e
 ✅ They must login first
 
 This is called Route Protection using Middleware.
-
-<!--
-hello -->
