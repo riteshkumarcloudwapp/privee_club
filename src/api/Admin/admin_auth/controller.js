@@ -14,7 +14,10 @@ export const adminLogin = async (req, res) => {
         password: Joi.string().min(8).required(),
       });
       const { error } = validation.validate(req.body);
-      if (error) return res.json({ status: false, message: error.message });
+      if (error) {
+        req.flash("error", error.message);
+        return res.redirect("/admin/login");
+      }
 
       // check for admin
       const admin = await Admin.findOne({
@@ -22,19 +25,15 @@ export const adminLogin = async (req, res) => {
       });
 
       if (!admin) {
-        return res.status(401).json({
-          status: false,
-          message: "Invalid credentials",
-        });
+        req.flash("error", "Invalid credentials");
+        return res.redirect("/admin/login");
       }
 
       // Compare password
       const isMatch = await bcrypt.compare(password, admin.password);
       if (!isMatch) {
-        return res.status(401).json({
-          status: false,
-          message: "Invalid credentials",
-        });
+        req.flash("error", "Invalid credentials");
+        return res.redirect("/admin/login");
       }
 
       // //jwt
@@ -54,14 +53,13 @@ export const adminLogin = async (req, res) => {
       return res.redirect("/admin/dashboard");
     }
 
-    res.render("admin/pages/login", { layout: false });
+    res.render("admin/pages/login", {
+      layout: false,
+    });
   } catch (error) {
     console.log("adminRegister error", error);
-    return res.status(500).json({
-      status: false,
-      message: "Internal server error",
-      error: error.message,
-    });
+    req.flash("error", "Something went wrong. Please try again.");
+    return res.redirect("/admin/login");
   }
 };
 

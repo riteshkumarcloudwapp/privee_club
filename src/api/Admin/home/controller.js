@@ -36,11 +36,31 @@ export const getDashboardStats = async (req, res) => {
 //getNewUsers
 export const getAllUsers = async (req, res) => {
   try {
-    // Example: fetch users awaiting approval
-    const users = await models.User.findAll();
+    //pagination
+    const limit = parseInt(req.query?.limit) || 5;
+    const page = parseInt(req.query?.page) || 1;
+    const offset = (page - 1) * limit;
 
+    // Example: fetch users awaiting approval
+    const { count, rows } = await models.User.findAndCountAll({
+      //rows -> it represents data, count -> total number of records in the database
+      limit,
+      offset,
+      order: [["created_at", "DESC"]],
+    });
+
+    const totalPages = Math.ceil(count / limit);
+
+    // return res.status(201).json({
+    //   status: true,
+    //   totalPages,
+    //   count,
+    //   rows,
+    // });
     res.render("admin/users/allUsers", {
-      users,
+      users: rows,
+      currentPage: page,
+      totalPages,
     });
   } catch (error) {
     console.log(error);
