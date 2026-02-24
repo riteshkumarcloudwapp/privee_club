@@ -16,20 +16,18 @@
 //3️⃣ envconfig.js
 //4️⃣ Create Sequelize instance
 
-// Always use fcm token in user resgister and login. *always add language filed in it.
+// Always use fcm token in user resgister and login. \*always add language filed in it.
 // Make single Api through type and value fieds in json.(In postman)(eg. selfie and bestPic)
 // use type and value method.
 
-//always use joi module for validation of request body and query params. 
+//always use joi module for validation of request body and query params.
 // and also pagination whenever you get data and make a list of data.
-
 
 //NOTES
 // Always make a seperate image table for image and use increnment way to store image.
 // Becs increnment way is much better than comma seperated becs operation is easy on it.
-// when yyou want to bilk upload anything  at ones always use map function for it.
+// when yyou want to bilk upload anything at ones always use map function for it.
 // always use increnment way to store id.
-
 
 //Register user
 Validate data
@@ -50,8 +48,6 @@ OTP in registration is used to:
 ✅ Activate account safely
 
 ✅ Enable password reset later
-
-
 
 What is a Templating Engine?
 
@@ -75,47 +71,44 @@ Commonly used with Express
 
 It uses {{ }} syntax.
 
-
 // Email sending steps
 1.Install Nodemailer -> its a mail sending nodejs library. This package enables us to send emails from our Node.js applications using various email services (like Gmail, Outlook, etc.)to other people
-2.Create a Transporter Object ->  This object contains the configuration for your email service's SMTP server and your authentication details.
+2.Create a Transporter Object -> This object contains the configuration for your email service's SMTP server and your authentication details.
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail', // Use well-known service name or specify host/port
-  auth: {
-    user: 'your-email@gmail.com', // Your email address
-    pass: 'your-app-password'   // Your generated App Password
-  }
+service: 'gmail', // Use well-known service name or specify host/port
+auth: {
+user: 'your-email@gmail.com', // Your email address
+pass: 'your-app-password' // Your generated App Password
+}
 });
 
 3.Define Mail Options -> Create an object that defines the content and recipients of the email.
 const mailOptions = {
-  from: '"Your Name" <your-email@gmail.com>', // Sender address and name
-  to: 'recipient-email@example.com, another-recipient@example.com', // List of receivers (comma-separated or array)
-  subject: 'Hello from Nodemailer!', // Subject line
-  text: 'This is the plain text body of the email.', // Plain text body
-  html: '<b>This is the HTML body of the email.</b>' // HTML body (optional)
+from: '"Your Name" <your-email@gmail.com>', // Sender address and name
+to: 'recipient-email@example.com, another-recipient@example.com', // List of receivers (comma-separated or array)
+subject: 'Hello from Nodemailer!', // Subject line
+text: 'This is the plain text body of the email.', // Plain text body
+html: '<b>This is the HTML body of the email.</b>' // HTML body (optional)
 };
 
 4.Send the Email -> Use the transporter.sendMail() method, passing the mailOptions object and a callback function to handle the response or any errors.
 transporter.sendMail(mailOptions, (error, info) => {
-  if (error) {
-    console.error('Error sending email:', error);
-  } else {
-    console.log('Email sent:', info.response);
-  }
+if (error) {
+console.error('Error sending email:', error);
+} else {
+console.log('Email sent:', info.response);
+}
 });
-
 
 //////////////////////////////////////
 ./ → current folder
 
 ../ → parent folder
 
-
 /////////////////////////////////////////
-1️⃣ What is __dirname?
+1️⃣ What is \_\_dirname?
 It gives you the absolute path of the current file’s directory. ->/home/ritesh/project/routes/user.js
 
 ✅ 2️⃣ What is path.join()?
@@ -124,10 +117,8 @@ path.join() comes from Node's built-in Node.js path module.
 
 It safely joins multiple path segments into one correct path for your OS.
 
-
-
 //////////////////////////////////////
-Why Use process.cwd() Instead of __dirname?
+Why Use process.cwd() Instead of \_\_dirname?
 
 If this code is inside server.js (root file):
 
@@ -135,18 +126,15 @@ Both usually work.
 
 But if it's inside another folder (like config/app.js):
 
-__dirname → gives that file's folder
+\_\_dirname → gives that file's folder
 
 process.cwd() → gives project root
 
 For static folders in root or server, process.cwd() is often safer.
 
-
-
 🍪 1️⃣ Session + Cookie (Traditional Way - Best for EJS)
 
-
-// cookie with token 
+// cookie with token
 🔑 2️⃣ JWT + Cookie (Token-Based)
 🔹 How it works:
 
@@ -156,7 +144,7 @@ Server generates a JWT token
 
 Token contains user data inside it
 
-Token is sent in cookie:  token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Token is sent in cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 On every request: cookie is sent to server and server verifies token
 
@@ -164,11 +152,9 @@ Server verifies token
 
 If valid → user authenticated
 
-
-
 // SESSION WITH COOKIE
 1️⃣ User logs in  
-2️⃣ Server creates a session (stores user data in memory or database)    -> sessionId=abc123
+2️⃣ Server creates a session (stores user data in memory or database) -> sessionId=abc123
 3️⃣ Server sends a cookie with session ID to the client
 4️⃣ Client stores cookie and sends it with every request
 5️⃣ Server checks session ID from cookie, retrieves session data, and authenticates user
@@ -193,8 +179,6 @@ Update success
 
 etc.
 
-
-
 What is an EJS Layout?
 
 In EJS (Embedded JavaScript), a layout is a common template file that contains the shared structure of your pages — like:
@@ -211,8 +195,6 @@ CSS & JS links
 
 Instead of repeating this structure in every page (dashboard, users, login, etc.), you create one layout file and inject page-specific content into it.
 
-
-
 ???????????????????????????????????????????????????
 i want user http://localhost:5000/admin/all-users he should not be awwlowed to enter the dashboard first how to solve this issues
 
@@ -220,3 +202,6 @@ i want user http://localhost:5000/admin/all-users he should not be awwlowed to e
 ✅ They must login first
 
 This is called Route Protection using Middleware.
+
+<!--
+hello -->
