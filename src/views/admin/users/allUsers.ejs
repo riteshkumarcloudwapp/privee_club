@@ -25,7 +25,7 @@
 
             <% users.forEach((user, index) => { %>
               <tr>
-                <td><%= index + 1 %></td>
+               <td><%= (currentPage - 1) * limit + index + 1 %></td>
 
 <td>
   <img src="/<%= user.best_pic %>"

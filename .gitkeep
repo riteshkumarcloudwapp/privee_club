@@ -194,19 +194,3 @@ Footer
 CSS & JS links
 
 Instead of repeating this structure in every page (dashboard, users, login, etc.), you create one layout file and inject page-specific content into it.
-
-???????????????????????????????????????????????????
-i want user http://localhost:5000/admin/all-users he should not be awwlowed to enter the dashboard first how to solve this issues
-
-❌ They should NOT access it
-✅ They must login first
-
-This is called Route Protection using Middleware.
-<<<<<<< HEAD
-=======
-
-<!--
-hello -->
-
-<!-- bdhbvcjdbvcdsbvfkdehbds -->
->>>>>>> bc407a5ff891b2c555321c6e4eedfb5fad4d2832
