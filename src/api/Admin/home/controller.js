@@ -37,13 +37,14 @@ export const getDashboardStats = async (req, res) => {
 export const getAllUsers = async (req, res) => {
   try {
     //pagination
-    const limit = parseInt(req.query?.limit) || 5;
+    const limit = parseInt(req.query?.limit) || 3;
     const page = parseInt(req.query?.page) || 1;
     const offset = (page - 1) * limit;
 
     // Example: fetch users awaiting approval
     const { count, rows } = await models.User.findAndCountAll({
       //rows -> it represents data, count -> total number of records in the database
+      //we are telling give me data in recently created , with limit 3 per page.
       limit,
       offset,
       order: [["created_at", "DESC"]],
@@ -60,6 +61,7 @@ export const getAllUsers = async (req, res) => {
     res.render("admin/users/allUsers", {
       users: rows,
       currentPage: page,
+      limit,
       totalPages,
     });
   } catch (error) {
